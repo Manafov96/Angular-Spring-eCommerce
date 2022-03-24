@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { CartItem } from '../common/cart-item';
 
 @Injectable({
@@ -9,9 +9,9 @@ export class CartService {
 
   public cartItems: CartItem[] = [];
 
-  public totalPrice: Subject<number> = new Subject<number>();
+  public totalPrice: BehaviorSubject<number> = new BehaviorSubject<number>(0);
 
-  public totalQuantity: Subject<number> = new Subject<number>();
+  public totalQuantity: BehaviorSubject<number> = new BehaviorSubject<number>(0);
 
   constructor() { }
 
@@ -66,9 +66,24 @@ export class CartService {
       tempCartItem => tempCartItem.id == theCartItem.id
     );
     // if found, remove the item from the array at the given index
-    if(itemIndex > -1) {
+    if (itemIndex > -1) {
       this.cartItems.splice(itemIndex, 1);
       this.computeCartTotals();
     }
   }
+
+  public computeTotals() {
+    let totalPriceValue: number = 0;
+    let totalQuantityValue: number = 0;
+
+    for (let currentCartItem of this.cartItems) {
+      totalPriceValue += currentCartItem.quantity * currentCartItem.unitPrice;
+      totalQuantityValue += currentCartItem.quantity;
+    }
+
+    // publish the new values ... all subscribers will recieve the new data
+    this.totalPrice.next(totalPriceValue);
+    this.totalQuantity.next(totalQuantityValue);
+  }
+
 }

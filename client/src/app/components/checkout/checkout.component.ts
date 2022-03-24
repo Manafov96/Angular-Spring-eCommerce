@@ -3,6 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { Country } from 'src/app/common/country';
 import { ShopValidators } from 'src/app/common/shop-validators';
 import { State } from 'src/app/common/state';
+import { CartService } from 'src/app/services/cart.service';
 import { FormService } from 'src/app/services/form.service';
 import { ShopService } from 'src/app/services/shop.service';
 
@@ -29,7 +30,8 @@ export class CheckoutComponent implements OnInit {
 
   public billingAddressStates: State[] = [];
 
-  constructor(private formBuilder: FormBuilder, private shopService: ShopService, private formService: FormService) { }
+  constructor(private formBuilder: FormBuilder, private shopService: ShopService,
+    private formService: FormService, private cartService: CartService) { }
 
   ngOnInit(): void {
     this.checkoutFormGroup = this.formBuilder.group({
@@ -83,7 +85,48 @@ export class CheckoutComponent implements OnInit {
         this.countries = data;
       }
     )
+
+    this.reviewCartDetails();
   }
+
+  // Customer Information
+  get firstName() { return this.checkoutFormGroup.get('customer.firstName'); }
+
+  get lastName() { return this.checkoutFormGroup.get('customer.lastName'); }
+
+  get email() { return this.checkoutFormGroup.get('customer.email'); }
+
+  // Shipping Address Information
+  get shippingAddressStreet() { return this.checkoutFormGroup.get('shippingAddress.street'); }
+
+  get shippingAddressCity() { return this.checkoutFormGroup.get('shippingAddress.city'); }
+
+  get shippingAddressState() { return this.checkoutFormGroup.get('shippingAddress.state'); }
+
+  get shippingAddressCountry() { return this.checkoutFormGroup.get('shippingAddress.country'); }
+
+  get shippingAddressZipCode() { return this.checkoutFormGroup.get('shippingAddress.zipCode'); }
+
+  // Billing Address Information
+  get billingAddressStreet() { return this.checkoutFormGroup.get('billingAddress.street'); }
+
+  get billingAddressCity() { return this.checkoutFormGroup.get('billingAddress.city'); }
+
+  get billingAddressState() { return this.checkoutFormGroup.get('billingAddress.state'); }
+
+  get billingAddressCountry() { return this.checkoutFormGroup.get('billingAddress.country'); }
+
+  get billingAddressZipCode() { return this.checkoutFormGroup.get('billingAddress.zipCode'); }
+
+  // Credit Card Information
+  get creditCardType() { return this.checkoutFormGroup.get('creditCard.cardType'); }
+
+  get creditCardNameOnCard() { return this.checkoutFormGroup.get('creditCard.nameOnCard'); }
+
+  get creditCardNumber() { return this.checkoutFormGroup.get('creditCard.cardNumber'); }
+
+  get creditCardSecurityCode() { return this.checkoutFormGroup.get('creditCard.securityCode'); }
+
 
   public onSubmit() {
     console.log(this.checkoutFormGroup.get('customer')!.value);
@@ -146,42 +189,16 @@ export class CheckoutComponent implements OnInit {
     )
   }
 
-  // Customer Information
-  get firstName() { return this.checkoutFormGroup.get('customer.firstName'); }
+  private reviewCartDetails() {
+    // subscribe to cartService totalQuantity
+    this.cartService.totalQuantity.subscribe(
+      totalQuantity => this.totalQuantity = totalQuantity
+    );
 
-  get lastName() { return this.checkoutFormGroup.get('customer.lastName'); }
-
-  get email() { return this.checkoutFormGroup.get('customer.email'); }
-
-  // Shipping Address Information
-  get shippingAddressStreet() { return this.checkoutFormGroup.get('shippingAddress.street'); }
-
-  get shippingAddressCity() { return this.checkoutFormGroup.get('shippingAddress.city'); }
-
-  get shippingAddressState() { return this.checkoutFormGroup.get('shippingAddress.state'); }
-
-  get shippingAddressCountry() { return this.checkoutFormGroup.get('shippingAddress.country'); }
-
-  get shippingAddressZipCode() { return this.checkoutFormGroup.get('shippingAddress.zipCode'); }
-
-  // Billing Address Information
-  get billingAddressStreet() { return this.checkoutFormGroup.get('billingAddress.street'); }
-
-  get billingAddressCity() { return this.checkoutFormGroup.get('billingAddress.city'); }
-
-  get billingAddressState() { return this.checkoutFormGroup.get('billingAddress.state'); }
-
-  get billingAddressCountry() { return this.checkoutFormGroup.get('billingAddress.country'); }
-
-  get billingAddressZipCode() { return this.checkoutFormGroup.get('billingAddress.zipCode'); }
-
-  // Credit Card Information
-  get creditCardType() { return this.checkoutFormGroup.get('creditCard.cardType'); }
-
-  get creditCardNameOnCard() { return this.checkoutFormGroup.get('creditCard.nameOnCard'); }
-
-  get creditCardNumber() { return this.checkoutFormGroup.get('creditCard.cardNumber'); }
-
-  get creditCardSecurityCode() { return this.checkoutFormGroup.get('creditCard.securityCode'); }
+    // subscribe to cartService totalPrice
+    this.cartService.totalPrice.subscribe(
+      totalPrice => this.totalPrice = totalPrice
+    );
+  }
 
 }
