@@ -5,14 +5,17 @@ import { CheckoutComponent } from './components/checkout/checkout.component';
 import { ProductDetailsComponent } from './components/product-details/product-details.component';
 import { ProductListComponent } from './components/product-list/product-list.component';
 import { LoginComponent } from './components/login/login.component';
+import { MembersPageComponent } from './components/members-page/members-page.component';
 
 import {
+  OktaAuthGuard,
   OktaCallbackComponent
 } from '@okta/okta-angular';
 
 const routes: Routes = [
   { path: 'login/callback', component: OktaCallbackComponent },
   { path: 'login', component: LoginComponent },
+  { path: 'members', component: MembersPageComponent, canActivate: [OktaAuthGuard] },
 
   { path: "search/:keyword", component: ProductListComponent },
   { path: "category/:id", component: ProductListComponent },
