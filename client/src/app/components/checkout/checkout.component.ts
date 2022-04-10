@@ -36,16 +36,23 @@ export class CheckoutComponent implements OnInit {
 
   public billingAddressStates: State[] = [];
 
+  private storage: Storage = sessionStorage;
+
+  private localStorage: Storage = localStorage;
+
   constructor(private formBuilder: FormBuilder, private shopService: ShopService,
     private formService: FormService, private cartService: CartService,
     private checkoutService: CheckoutService, private router: Router) { }
 
   ngOnInit(): void {
+    // read user email 
+    const theEmail = JSON.parse(this.storage.getItem('userEmail')!);
+
     this.checkoutFormGroup = this.formBuilder.group({
       customer: this.formBuilder.group({
         firstName: new FormControl('', [Validators.required, Validators.minLength(2), ShopValidators.notOnlyWhiteSpace]),
         lastName: new FormControl('', [Validators.required, Validators.minLength(2), ShopValidators.notOnlyWhiteSpace]),
-        email: new FormControl('', [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')])
+        email: new FormControl(theEmail, [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')])
       }),
       shippingAddress: this.formBuilder.group({
         street: new FormControl('', [Validators.required, Validators.minLength(2), ShopValidators.notOnlyWhiteSpace]),
@@ -197,6 +204,9 @@ export class CheckoutComponent implements OnInit {
 
     // reset the form
     this.checkoutFormGroup.reset();
+
+    // reset local storage
+    this.localStorage.removeItem('cartItems');
 
     // navigate back to the products page
     this.router.navigateByUrl("/prodcuts");

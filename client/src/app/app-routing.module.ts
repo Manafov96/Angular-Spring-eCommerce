@@ -11,11 +11,13 @@ import {
   OktaAuthGuard,
   OktaCallbackComponent
 } from '@okta/okta-angular';
+import { OrderHistoryComponent } from './components/order-history/order-history.component';
 
 const routes: Routes = [
   { path: 'login/callback', component: OktaCallbackComponent },
   { path: 'login', component: LoginComponent },
   { path: 'members', component: MembersPageComponent, canActivate: [OktaAuthGuard] },
+  { path: 'order-history', component: OrderHistoryComponent, canActivate: [OktaAuthGuard] },
 
   { path: "search/:keyword", component: ProductListComponent },
   { path: "category/:id", component: ProductListComponent },
