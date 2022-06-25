@@ -100,7 +100,7 @@ export class CartService {
     this.totalQuantity.next(totalQuantityValue);
   }
 
-  private persistCartItems() {
+  public persistCartItems() {
     if (this.cartItems) {
       this.storage.setItem('cartItems', JSON.stringify(this.cartItems));
     }
